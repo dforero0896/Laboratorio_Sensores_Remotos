@@ -15,6 +15,8 @@ from osgeo import gdal_array
 
 # open raster and choose band to find min, max
 raster = r'srtm_39_05.tif'
+#Punto 2
+print 'PUNTO 2'
 gtif = gdal.Open(raster)
 srcband = gtif.GetRasterBand(1)
 #datos = srcband.ReadAsArray()
@@ -25,10 +27,13 @@ print 'Max=', stats[1]
 print 'Mean=', stats[2]
 
 
-
+#Punto 3
+print 'PUNTO 3'
 os.system('gdal_translate -srcwin 0 0 1500 1500 srtm_39_05.tif cut.tif')
 
 
+#Punto 4
+print 'PUNTO 4'
 
 raster = r'cut.tif'
 gtif_cut = gdal.Open(raster)
@@ -43,6 +48,8 @@ for i in range(0, 1500):
     traza+=value    
 print 'La suma de los elementos de la diagonal es ',traza
 
+#Punto 5
+print 'PUNTO 5'
 mypic = gdal.Open(r'mypic.jpg')
 myband_1=mypic.GetRasterBand(1)
 myband_2=mypic.GetRasterBand(2)
@@ -60,7 +67,8 @@ stats_B=myband_3.GetStatistics(True, True)
 print 'Min B=', stats_B[0]
 print 'Max B=', stats_B[1]
 print 'Mean B= ', stats_B[2]
-
+#Punto 6
+print 'PUNTO 6'
 mypic_R=myband_1.ReadAsArray()
 mypic_G=myband_2.ReadAsArray()
 mypic_B=myband_3.ReadAsArray()
@@ -73,7 +81,8 @@ mypic_Band = mypic_out.GetRasterBand(1)
 mypic_Band.WriteArray(mypic_arr_tiff, 0, 0)
 
 
-
+#Punto 7 
+print 'PUNTO 7'
 os.system('gdal_translate -srcwin 299 0 10 10 mypic.tiff mycut.tiff')
 
 littleCorner=gdal.Open(r'mycut.tiff')
@@ -86,7 +95,8 @@ print 'El valor minimo de la region de 10x10 es ', littleStats[0]
 print 'El valor maximo de la region de 10x10 es ', littleStats[1]
 
 
-
+#Punto 8
+print 'PUNTO 8'
 
 cut_arr=srcband_cut.ReadAsArray()
 
@@ -101,7 +111,8 @@ DEM_mypic_Band.WriteArray(cut_arr, 0, 0)
 
 
 
-
+#Punto 9
+print 'PUNTO 9'
 
 
 os.system("gdal_translate -outsize 60 60 cut.tif small_cut.tif")
@@ -118,6 +129,9 @@ driver = gtif.GetDriver()
 mypic_DEM_out=driver.Create('mypic_DEM.tif' , np.shape(cut_arr)[0], np.shape(cut_arr)[1], 1, GDT_Int32)
 mypic_DEM_Band = mypic_DEM_out.GetRasterBand(1)
 mypic_DEM_Band.WriteArray(mypic_Dem_arr, 0, 0)
+
+#Punto 10
+print 'PUNTO 10, EPSG 23032'
 
 os.system("gdal_translate -a_ullr 9.9995836 40.0004168 11.2495836 38.7504168 DEM_mypic.tiff DEM_mypic_geor.tiff")
 os.system("gdalwarp -t_srs EPSG:23032 DEM_mypic_geor.tiff projected.tiff")
@@ -145,6 +159,8 @@ DEM_mypic_proj_Band = DEM_mypic_proj.GetRasterBand(1)
 DEM_mypic_proj_Band.WriteArray(cut_arr, 0, 0)
 
 '''
+#Punto 11
+print 'PUNTO 11'
 
 upperLeft=[9.9995836, 40.0004168]
 lowerRight=[11.2495836, 38.7504168]
@@ -186,6 +202,7 @@ restafinalBand = restafinal.GetRasterBand(1)
 restafinalBand.WriteArray(resta_final, 0, 0)
 
 
-print 'F*****g DONE'
+#print 'F*****g DONE'
+print 'DONE'
 
 
