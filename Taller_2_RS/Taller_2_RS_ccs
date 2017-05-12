@@ -1,0 +1,89 @@
+#!/usr/bin/env python
+import numpy as np
+#import matplotlib.pyplot as plt
+from osgeo import ogr, osr
+import os
+
+#Declaracion del formato en el que se guardara el archivo
+formato = ogr.GetDriverByName("ESRI Shapefile")
+
+#Creacion del archivo
+if os.path.exists('localidades.shp'):
+   formato.DeleteDataSource('localidades.shp')
+archivo = formato.CreateDataSource("localidades.shp")
+
+
+#Especificacion del sistema de referencia que se va a utiliza en este caso wgs84
+srs = osr.SpatialReference()
+srs.ImportFromEPSG(4326)
+
+#Creacion de la capa especificando que es un conjunto de lineas (ogr.wkbMultiLineString)
+capa = archivo.CreateLayer("localidades", srs, ogr.wkbPolygon)
+
+#Declaracion de los atributos
+nombre = ogr.FieldDefn("Nombre", ogr.OFTString)
+
+#Tamano del atributo
+nombre.SetWidth(24)
+
+#Anadiendo el atributo a la capa
+capa.CreateField(nombre)
+
+
+caracteristicas = ogr.Feature(capa.GetLayerDefn())
+
+caracteristicas.SetField("Nombre", "Santafe")
+
+cuadro=ogr.Geometry(ogr.wkbLinearRing)
+cuadro.AddPoint(-74.0448766569741,4.763158995292446,0)
+cuadro.AddPoint(-74.04752766994169,4.763539141662119,0)
+cuadro.AddPoint(-74.04784411318798,4.761678113921909,0)
+cuadro.AddPoint(-74.04637902877995,4.760783780667224,0)
+cuadro.AddPoint(-74.04531713734968,4.760895683404102,0)
+cuadro.AddPoint(-74.04504159848645,4.762075432123942,0)
+cuadro.AddPoint(-74.0448766569741,4.763158995292446,0)
+poly=ogr.Geometry(ogr.wkbPolygon)
+poly.AddGeometry(cuadro)
+
+#print poly.ExportToWkt()
+
+ciudad = ogr.CreateGeometryFromWkt(poly.ExportToWkt())
+
+
+caracteristicas.SetGeometry(ciudad)
+
+
+capa.CreateFeature(caracteristicas)
+
+
+
+
+caracteristicas2 = ogr.Feature(capa.GetLayerDefn())
+
+caracteristicas2.SetField("Nombre", "Gran Estacion")
+
+cuadro2=ogr.Geometry(ogr.wkbLinearRing)
+cuadro2.AddPoint(-74.10252212728517,4.64555043358498,0)
+cuadro2.AddPoint(-74.10175690260594,4.646236314603915,0)
+cuadro2.AddPoint(-74.10023803498608,4.647374969774079,0)
+cuadro2.AddPoint(-74.10128003483622,4.649019916232533,0)
+cuadro2.AddPoint(-74.10305882387274,4.648207482763627,0)
+cuadro2.AddPoint(-74.10270286403681,4.647334126803334,0)
+cuadro2.AddPoint(-74.10378111451155,4.64653210672291,0)
+cuadro2.AddPoint(-74.10283105757293,4.645404472708872,0)
+cuadro2.AddPoint(-74.10252212728517,4.64555043358498,0)
+poly2=ogr.Geometry(ogr.wkbPolygon)
+poly2.AddGeometry(cuadro2)
+
+#print poly.ExportToWkt()
+
+ciudad2 = ogr.CreateGeometryFromWkt(poly2.ExportToWkt())
+
+
+caracteristicas2.SetGeometry(ciudad2)
+
+
+capa.CreateFeature(caracteristicas2)
+
+
+

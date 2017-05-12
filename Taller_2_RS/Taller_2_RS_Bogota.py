@@ -18,7 +18,7 @@ srs = osr.SpatialReference()
 srs.ImportFromEPSG(4326)
 
 #Creacion de la capa especificando que es un conjunto de lineas (ogr.wkbMultiLineString)
-capa = archivo.CreateLayer("ciudad", srs, ogr.wkbPolygon)
+capa = archivo.CreateLayer("Bogota", srs, ogr.wkbPolygon)
 
 #Declaracion de los atributos
 nombre = ogr.FieldDefn("Nombre", ogr.OFTString)
@@ -33,11 +33,24 @@ region = ogr.FieldDefn("Region", ogr.OFTString)
 region.SetWidth(24)
 capa.CreateField(region)
 
+poblacion = ogr.FieldDefn("Poblacion", ogr.OFTString)
+poblacion.SetWidth(24)
+capa.CreateField(poblacion)
+
+alcalde = ogr.FieldDefn("Alcalde", ogr.OFTString)
+alcalde.SetWidth(24)
+capa.CreateField(alcalde)
+
+
+region = ogr.FieldDefn("Region", ogr.OFTString)
+region.SetWidth(24)
+
 caracteristicas = ogr.Feature(capa.GetLayerDefn())
 
-caracteristicas.SetField("Nombre", "ciudad")
+caracteristicas.SetField("Nombre", "Bogota")
 caracteristicas.SetField("Region", "Cundinamarca")
-
+caracteristicas.SetField("Poblacion", "8.081M")
+caracteristicas.SetField("Alcalde", "Penalosa")
 
 cuadro=ogr.Geometry(ogr.wkbLinearRing)
 cuadro.AddPoint(-74.19726373334838,4.572470399422518,0)
@@ -71,12 +84,19 @@ caracteristicas.SetGeometry(ciudad)
 capa.CreateFeature(caracteristicas)
 
 
+'''
+#Creacion del archivo
+if os.path.exists('localidades.shp'):
+   formato.DeleteDataSource('localidades.shp')
+archivo = formato.CreateDataSource("localidades.shp")
+
+
 caracteristicas1 = ogr.Feature(capa.GetLayerDefn())
 
 caracteristicas1.SetField("Nombre", "ciudad1")
 caracteristicas1.SetField("Region", "Cundinamarca1")
 
-'''
+
 cuadro=ogr.Geometry(ogr.wkbLinearRing)
 cuadro.AddPoint(-75,1)
 cuadro.AddPoint(-72,2)
@@ -88,7 +108,7 @@ poly=ogr.Geometry(ogr.wkbPolygon)
 poly.AddGeometry(cuadro)
 
 print poly.ExportToWkt()
-'''
+
 #ciudad1 = ogr.CreateGeometryFromWkt(poly.ExportToWkt())
 
 
@@ -98,8 +118,10 @@ print poly.ExportToWkt()
 #Insertando las caracteristicas a la capa
 #capa.CreateFeature(caracteristicas1)
 
-
+'''
 #'''
+if os.path.exists('Bogota_proj.shp'):
+   formato.DeleteDataSource('Bogota_proj.shp')
 os.system('ogr2ogr -f "ESRI Shapefile" -t_srs EPSG:32618 Bogota_proj.shp Bogota.shp')
 #'''
 
