@@ -5,7 +5,7 @@ import osr
 import os
 import numpy as np
 import math as mt
-shapefile = "vias.shp" 
+shapefile = "vias.shp"
 driver = ogr.GetDriverByName("ESRI Shapefile")
 dataSource = driver.Open(shapefile, 1)
 print type(dataSource)
@@ -58,42 +58,42 @@ def dda(capavia):
             y=int((y1-miny)/res)
             xf=int((x2-minx)/res)
             yf=int((y2-miny)/res)
-            r[y,x]=1
+            r[y,x]=10
             if abs(m)<1:
                while(x<xf):
                  x=x+1
                  y=y+m
-                 r[round(y),x]=1
+                 r[round(y),x]=10
             elif abs(m)>=1:
                 if m>0:
                     while(y<yf):
                         x+=1./abs(m)
                         y+=1
                         if round(x)==588.:
-                            print 'hola'
-                            
                             x=587
-                        r[round(y),round(x)]=1
+                        r[round(y),round(x)]=10
                 else:
                     while(y>yf):
                         x+=1./abs(m)
                         y-=1
                         if round(x)==588.:
                             x=587
-                        r[round(y),round(x)]=1
+                        r[round(y),round(x)]=10
 
-             #   print round(y),round(x)   
-                    
+             #   print round(y),round(x)
+
     return r,minx,miny,res
 resultado,xdef,ydef,reso=dda(capa)
-print 'voy bien'
+print 'que chimba'
 driver=gdal.GetDriverByName('GTiff')
-if os.path.exists('resultado.tif'):
-   driver.Delete('resultado.tif')
-salida=driver.Create('resultado.tif',resultado.shape[1],resultado.shape[0],1,GDT_Float32)
+if os.path.exists('vias.tif'):
+   driver.Delete('vias.tif')
+salida=driver.Create('vias.tif',resultado.shape[1],resultado.shape[0],1,GDT_Float32)
 salida.SetGeoTransform((xdef, reso, 0, ydef, 0, reso))
 banda1=salida.GetRasterBand(1)
 banda1.WriteArray(resultado)
 salidaSRS = osr.SpatialReference()
 salidaSRS.ImportFromEPSG(4326)
 salida.SetProjection(salidaSRS.ExportToWkt())
+
+print 'El algoritmo conserva la forma de la vía bastante bien. Obviamente, esto depende mucho del número o la densidad de pixeles en la imagen, ya que a mayor densidad, estos serán menos distinguibles, y la imagen se parecerá mucho más a la vectorizada.'
