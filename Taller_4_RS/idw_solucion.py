@@ -1,5 +1,5 @@
 import time
-start_time = time.time()
+start_Totaltime = time.time()
 import numpy as np
 import gdal
 import os
@@ -8,91 +8,27 @@ from gdalconst import *
 #import matplotlib.pyplot as plt
 from collections import Counter
 nortes,estes,cotas,profundidad,porosidad=np.loadtxt('PuntosTaller4.csv',dtype={'names':('norte','este','cota','profundidad','porosidad'),'formats':('f4','f4','f4','f4','f2')},delimiter=';',usecols=(0,1,2,3,4),unpack=True,skiprows=1)
-grillaCota=np.empty((1001,1001))
-grillaCota[:]=np.nan
-for k in range(len(nortes)):
-    x=estes[k]
-    y=1000-nortes[k]
-    grillaCota[y,x]=cotas[k]
+
+def fill(z):
+    arr=np.empty((1001,1001))
+    arr[:]=np.pi
+    for k in range(len(nortes)):
+        x=estes[k]
+        y=1000-nortes[k]
+        arr[y,x]=z[k]
+    return arr
 
 
-
-grillaProf=np.empty((1001,1001))
-grillaProf[:]=np.nan
-for k in range(len(nortes)):
-    x=estes[k]
-    y=1000-nortes[k]
-    grillaProf[y,x]=profundidad[k]
-
-
-
-
-grillaPor=np.empty((1001,1001))
-grillaPor[:]=np.nan
-for k in range(len(nortes)):
-    x=estes[k]
-    y=1000-nortes[k]
-    grillaPor[y,x]=porosidad[k]
 
 #%%
-
 
 #%%
 def h(x1, x2, y1, y2):
     return np.sqrt((x1-x2)**2+(y1-y2)**2)
-'''   
-from scipy.optimize import curve_fit
-def func(x, a, b, c):
-    return a * x + c
 
-
-
-
-    
-def semi(z):
-    global func
-    h_array=[]
-    z_diff_sq=[]
-    for i in range(len(nortes)):
-        for k in range(i+1,len(nortes)):
-            h_array.append(np.round(h(nortes[k], nortes[i], estes[k], estes[i])))
-            z_diff_sq.append((z[i]-z[k])**2)
-            rep_arr=Counter(h_array)
-    z_diff_sq=np.array(z_diff_sq)
-        
-    data_arr_h=[]
-    for i in range(len(h_array)):
-        suma=sum(z_diff_sq[h_array==h_array[i]])
-        data_arr_h.append(0.5*(rep_arr[h_array[i]])*suma)
-    popt, pcov = curve_fit(func, h_array/np.mean(h_array), data_arr_h/np.mean(data_arr_h))
-    xdata=np.linspace(min(h_array), max(h_array), 100)
-    plt.plot(xdata, np.mean(data_arr_h)*func(xdata/np.mean(h_array), *popt), 'r-', label='fit')    
-    plt.scatter(h_array, data_arr_h)
-    plt.xlabel('h')
-    plt.ylabel('$\gamma$')
-#    plt.show()
-    return 0
-#%%
-#Para las cotas
-plt.figure(1)
-semi(cotas)
-plt.gcf()
-plt.savefig('semivar_cotas.png')
-#%%
-#Para profundidad
-plt.figure(2)
-semi(profundidad)
-plt.savefig('semivar_prof.png')
-#%%
-#Para porosidad
-plt.figure(3)
-semi(porosidad)
-plt.savefig('semivar_por.png')
-
-#%%
 
 #%%    
-'''
+
 def idwinterp(z, n):
     
     for i in range(1001):
@@ -100,7 +36,7 @@ def idwinterp(z, n):
         for j in range(1001):
             norte=1000-j
             totalInvDistancia=0
-            if np.isnan(z[j,i]):
+            if z[j,i]==np.pi:
                 num=0
                 den=0
                 for k in range(len(nortes)):
@@ -113,73 +49,97 @@ def idwinterp(z, n):
             
     
                 
-    return 0 #plt.imshow(z, interpolation='none')
+    return plt.imshow(z, interpolation='none')
 
 #%%
-
-#plt.figure(4)
-idwinterp(grillaCota, 2)
-#plt.gcf()
-#plt.savefig('cota.png')
+import matplotlib.pyplot as plt
+plt.figure(4)
+cot_arr_2=fill(cotas)
+start_time = time.time()
+idwinterp(cot_arr_2, 2)
+plt.colorbar()
+print("It took me %s seconds." % (time.time() - start_time))
+plt.gcf()
+plt.savefig('cota.png')
 #plt.show()
 
 
 #%%
-#plt.figure(5)
-idwinterp(grillaProf, 2)
-#plt.gcf()
-#plt.savefig('profundidad.png')
+plt.figure(5)
+prf_arr_2=fill(profundidad)
+start_time = time.time()
+idwinterp(prf_arr_2, 2)
+plt.colorbar()
+print("It took me %s seconds." % (time.time() - start_time))
+plt.gcf()
+plt.savefig('profundidad.png')
 #plt.show()
 #%%
 
-#plt.figure(6)
-idwinterp(grillaPor, 2)
-#plt.gcf()
-#plt.savefig('porosidad.png')
+plt.figure(6)
+por_arr_2=fill(porosidad)
+start_time = time.time()
+idwinterp(por_arr_2, 2)
+plt.colorbar()
+print("It took me %s seconds." % (time.time() - start_time))
+plt.gcf()
+plt.savefig('porosidad.png')
 #plt.show()
 #%%
-#plt.figure(7)
-idwinterp(grillaCota, 4)
-#plt.gcf()
-#plt.savefig('cota_4.png')
+plt.figure(7)
+cot_arr_4=fill(cotas)
+start_time = time.time()
+idwinterp(cot_arr_4, 4)
+plt.colorbar()
+print("It took me %s seconds." % (time.time() - start_time))
+plt.gcf()
+plt.savefig('cota_4.png')
 #plt.show()
 #%%
 
-#plt.figure(8)
-idwinterp(grillaProf, 4)
-#plt.gcf()
-#plt.savefig('profundidad_4.png')
+plt.figure(8)
+prf_arr_4=fill(profundidad)
+start_time = time.time()
+idwinterp(prf_arr_4, 4)
+plt.colorbar()
+print("It took me %s seconds." % (time.time() - start_time))
+plt.gcf()
+plt.savefig('profundidad_4.png')
 #plt.show()
 #%%
 
-#plt.figure(9)
-idwinterp(grillaPor, 4)
-#plt.gcf()
-#plt.savefig('porosidad_4.png')
+plt.figure(9)
+por_arr_4=fill(porosidad)
+start_time = time.time()
+idwinterp(por_arr_4, 4)
+plt.colorbar()
+print("It took me %s seconds." % (time.time() - start_time))
+plt.colorbar()
+plt.gcf()
+plt.savefig('porosidad_4.png')
 #plt.show()
 #%%
 #print 'PC will shut down'
 #os.system('sudo shutdown -P +2')        
 # %%driver=gdal.GetDriverByName('GTiff')
 
-
+'''
 if os.path.exists('cota.tif'):
    driver.Delete('cota.tif')
-salida=driver.Create('cota.tif',grillaCota.shape[1],grillaCota.shape[0],1,GDT_Float32)
+salida=driver.Create('cota.tif',cot_arr_2.shape[1],cot_arr_2.shape[0],1,GDT_Float32)
 salida.SetGeoTransform((0, 1, 0, 1000, 0, -1))
 banda1=salida.GetRasterBand(1)
-banda1.WriteArray(grillaCota)
+banda1.WriteArray(cot_arr_2)
 salidaSRS = osr.SpatialReference()
 salidaSRS.ImportFromEPSG(32618)
 salida.SetProjection(salidaSRS.ExportToWkt())
 
-
 if os.path.exists('profundidad.tif'):
    driver.Delete('profundidad.tif')
-salida=driver.Create('profundidad.tif',grillaProf.shape[1],grillaProf.shape[0],1,GDT_Float32)
+salida=driver.Create('profundidad.tif',prf_arr_2.shape[1],prf_arr_2.shape[0],1,GDT_Float32)
 salida.SetGeoTransform((0, 1, 0, 1000, 0, -1))
 banda1=salida.GetRasterBand(1)
-banda1.WriteArray(grillaProf)
+banda1.WriteArray(prf_arr_2)
 salidaSRS = osr.SpatialReference()
 salidaSRS.ImportFromEPSG(32618)
 salida.SetProjection(salidaSRS.ExportToWkt())
@@ -187,15 +147,68 @@ salida.SetProjection(salidaSRS.ExportToWkt())
 
 if os.path.exists('porosidad.tif'):
    driver.Delete('porosidad.tif')
-salida=driver.Create('porosidad.tif',grillaPor.shape[1],grillaPor.shape[0],1,GDT_Float32)
+salida=driver.Create('porosidad.tif',por_arr_2.shape[1],por_arr_2.shape[0],1,GDT_Float32)
 salida.SetGeoTransform((0, 1, 0, 1000, 0, -1))
 banda1=salida.GetRasterBand(1)
-banda1.WriteArray(grillaPor)
+banda1.WriteArray(por_arr_2)
+salidaSRS = osr.SpatialReference()
+salidaSRS.ImportFromEPSG(32618)
+salida.SetProjection(salidaSRS.ExportToWkt())
+
+if os.path.exists('cota_4.tif'):
+   driver.Delete('cota_4.tif')
+salida=driver.Create('cota_4.tif',cot_arr_4.shape[1],cot_arr_4.shape[0],1,GDT_Float32)
+salida.SetGeoTransform((0, 1, 0, 1000, 0, -1))
+banda1=salida.GetRasterBand(1)
+banda1.WriteArray(cot_arr_4)
+salidaSRS = osr.SpatialReference()
+salidaSRS.ImportFromEPSG(32618)
+salida.SetProjection(salidaSRS.ExportToWkt())
+
+if os.path.exists('profundidad_4.tif'):
+   driver.Delete('profundidad_4.tif')
+salida=driver.Create('profundidad_4.tif',prf_arr_4.shape[1],prf_arr_4.shape[0],1,GDT_Float32)
+salida.SetGeoTransform((0, 1, 0, 1000, 0, -1))
+banda1=salida.GetRasterBand(1)
+banda1.WriteArray(prf_arr_4)
 salidaSRS = osr.SpatialReference()
 salidaSRS.ImportFromEPSG(32618)
 salida.SetProjection(salidaSRS.ExportToWkt())
 
 
-print("It took me %s seconds." % (time.time() - start_time))
+if os.path.exists('porosidad_4.tif'):
+   driver.Delete('porosidad_4.tif')
+salida=driver.Create('porosidad_4.tif',por_arr_4.shape[1],por_arr_4.shape[0],1,GDT_Float32)
+salida.SetGeoTransform((0, 1, 0, 1000, 0, -1))
+banda1=salida.GetRasterBand(1)
+banda1.WriteArray(por_arr_4)
+salidaSRS = osr.SpatialReference()
+salidaSRS.ImportFromEPSG(32618)
+salida.SetProjection(salidaSRS.ExportToWkt())
 
-print 'No hay mucha diferencia entre las interpolaciones hechas con los exponentes 2 y 4. esto puede deberse a que la densidad de puntos es lo suficientemente grande como para que la diferencia sea imperceptible. No obstante podemos decir que mientras el exponente sea menor, el peso es mayor (dado que h>1) y menor (si h<1), por lo que implica que, por ejemplo, si h>1, el de menor exponente será mas sensible a puntos de menr valor.'
+'''
+
+print("It took me %s seconds." % (time.time() - start_Totaltime))
+
+print 'Se ve que para exponentes mayores, la interpolación es más "borrosa" que en el caso con menor exponente, esto se puede deber a que se consideran con más "fuerza" las distintas contribuciones de los puntos existentes. No parece haber una razon lo suficientemente importante como para decidir que exponente utilizar. Se utilizaron 2 y 4, las imagenes producidas con el exponente 4 tienen sufijo _4'
+
+#%%
+def thick_calculation(cot, prf, por):
+    cota_a_a=(200.+69.)*np.ones([1001, 1001])
+    espesor=cot-prf-cota_a_a
+    espesor[espesor<0]=0
+    espesor_hc=espesor*por/100
+    plt.figure(20)
+    plt.imshow(espesor_hc)
+    plt.colorbar()
+    plt.savefig('espesor_hc.png')
+    volumen=1.*1*espesor_hc #espesor por ancho en x y y de cada celda en metros
+    print 'El volumen de hidrocarburo es ', sum(sum(volumen)), 'm**3'
+    return sum(sum(volumen))
+
+#plt.imshow(espesor)
+#%%
+print 'Con exponente 2'
+thick_calculation(cot_arr_2, prf_arr_2, por_arr_2)
+print 'Con exponente 4'
+thick_calculation(cot_arr_4, prf_arr_4, por_arr_4)
