@@ -198,3 +198,4 @@ salida.SetProjection(salidaSRS.ExportToWkt())
 
 print("It took me %s seconds." % (time.time() - start_time))
 
+print 'No hay mucha diferencia entre las interpolaciones hechas con los exponentes 2 y 4. esto puede deberse a que la densidad de puntos es lo suficientemente grande como para que la diferencia sea imperceptible. No obstante podemos decir que mientras el exponente sea menor, el peso es mayor (dado que h>1) y menor (si h<1), por lo que implica que, por ejemplo, si h>1, el de menor exponente será mas sensible a puntos de menr valor.'
