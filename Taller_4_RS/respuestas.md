@@ -1,5 +1,5 @@
 # Respuestas Talleres 4 y 5
-### Esta solución es presentada por Andres Delgado y Daniel Forero
+### Esta solución es presentada por Andrea Delgado y Daniel Forero
 El script *idw_solucion.py* contiene la solución a la segunda parte del Taller 4 y al Taller 5. El script *semi_plots.py* soluciona la primera parte del Taller 4.
 
 ## Taller 4 
